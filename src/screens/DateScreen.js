@@ -14,7 +14,7 @@ const momentTime = require("moment-timezone");
 const TimeSlot = ({ item, current_date }) => {
   const allTimes = useMemo(() => {
     return getTimeSlot(item);
-  }, [item]);
+  }, [item,current_date]);
   return (
     <div className="row">
       {diffranceDate(item, moment(current_date)) < 0 ? (
@@ -43,11 +43,10 @@ export const DateScreen = () => {
   const [selectedOption, setSelectedOption] = useState();
   const [weekDates, setWeekDates] = useState([]);
   const [currentWeek, setCurrentWeek] = useState(new Date());
-  const current_date = new Date();
-
-  useEffect(() => {
+  const current_date = useMemo(()=>{
     momentTime.tz.setDefault(selectedOption?.value);
-  }, [selectedOption]);
+    return moment()
+  },[selectedOption])
 
   const handleChange = (data) => {
     setSelectedOption(data);
@@ -80,7 +79,7 @@ export const DateScreen = () => {
         <button className="btn btn-primary" onClick={prev}>
           Previous
         </button>
-        <div>{current_date.toDateString()}</div>
+        <div>{current_date.format("DD-MM-yyyy")}</div>
         <Select
           className="col-4"
           value={selectedOption}
@@ -97,7 +96,7 @@ export const DateScreen = () => {
           <div className=" border d-flex p-4 mb-3">
             <div className="col-2">{item.format("DD-MM-YYYY")}</div>
             <div className="col-9">
-                <TimeSlot item={item} current_date={current_date} />
+                <TimeSlot item={item} current_date={current_date}/>
             </div>
           </div>
         ))}
